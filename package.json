@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "./node_modules/.bin/webpack-dev-server --content-base ./dist/ --entry ./script/webpack.dev.js",
     "start": "npm run dev",
-    "dev": "./node_modules/.bin/webpack --config ./script/webpack.dev.js",
-    "prod": "./node_modules/.bin/webpack --config ./script/webpack.prod.js"
+    "dev": "./node_modules/.bin/webpack-dev-server --config ./script/webpack.dev.js",
+    "prod": "./node_modules/.bin/webpack --config ./script/webpack.prod.js",
+    "build": "rm -fr node_modules && npm run prod"
   },
   "repository": {
     "type": "git",
