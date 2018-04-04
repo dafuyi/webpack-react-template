@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# don't push to github
+dist/
+
+# demo file in building process
+test/
