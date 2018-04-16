@@ -1,12 +1,11 @@
-var HtmlWebpackPlugin = require( 'html-webpack-plugin' );
-
+const HtmlWebpackPlugin = require( 'html-webpack-plugin' )
 /*
 @ref https://github.com/webpack/webpack/issues/6568
 ```shell
 yarn add extract-text-webpack-plugin@next -D
 ```
  */
-const ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
+// const ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
 
 module.exports = {
   entry: {
@@ -16,7 +15,6 @@ module.exports = {
 
     module: {
         rules: [
-
             // 这两行是处理 react 相关的内容
             {
                 test: /\.(js|jsx)$/,
@@ -24,6 +22,25 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                 }
+            },
+            {   // load font
+                // Capture eot, ttf, woff, and woff2
+                test: /\.(eot|ttf|woff|woff2)$/,
+                use: {
+                    /**
+                     * url-loader 是 file-loader 的封装，返回指定文件的
+                     * DataUrl。但是如果文件大于指定的限制`limit`，就会
+                     * 默认使用 file-loader 来处理。
+                     * @type {String}
+                     */
+                    loader: 'url-loader',
+                    options: {
+                        limit: 4048,
+                        publicPath: './css/font/',
+                        outputPath: './css/font/',
+                        name: '[name].[ext]'
+                    }
+                },
             },
             {
               test: /\.(gif|png|jpe?g|svg)$/i,
@@ -52,7 +69,6 @@ module.exports = {
             template: './src/templates/tags.html',
             filename: "tags.html",
             chunks: ['tags']
-        } ),
-        new ExtractTextPlugin('style.css')
+        } )
     ],
 };

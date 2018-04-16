@@ -1,27 +1,44 @@
-const webpack = require( 'webpack' )
+const merge = require('webpack-merge')
+const webpack = require('webpack')
+const MiniCssPlugin = require('mini-css-extract-plugin')
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 
-const merge = require( 'webpack-merge' )
+const base = require('./webpack.base')
 
-const base = require( './webpack.base' )
 
-const MiniCssPlugin = require( 'mini-css-extract-plugin' )
+module.exports = merge(base, {
 
-module.exports = merge( base, {
+    mode: 'production',
 
-  mode: 'production',
+    output: {
+        filename: '[name].boudle.js',
+        path: __dirname + "./../dist"
+    },
 
-  module: {
-    rules: [
-        {
-          test: /\.css$/,
-          use: [
-                MiniCssPlugin.loader,
-                'css-loader'
-              ]
-          },
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin( {
+                cache: true,
+                parallel: true,
+                sourceMap: true,
+            } ),
+            new OptimizeCSSAssetsPlugin({})
+        ]
+    },
+
+    module: {
+        rules: [
             {
-              test: /\.html$/,
-              use: [ {
+                test: /\.css$/,
+                use: [
+                    MiniCssPlugin.loader,
+                    'css-loader'
+                  ]
+            },
+            {
+                test: /\.html$/,
+                use: [ {
                     loader: 'html-loader',
                     options: {
                         minimize: false
@@ -35,10 +52,10 @@ module.exports = merge( base, {
         new webpack.HashedModuleIdsPlugin(),
         new webpack.NamedChunksPlugin(
             chunk => chunk.name || 'faceless-chunk'
-        ), // a chunk has no name!!!
-        new MiniCssPlugin( {
+        ),
+        new MiniCssPlugin({
             filename: '[name].[chunkhash:6].css',
-            chunkFilename: '[name].[chunkhash:6].css'
+            chunkFilename: '[id].css'
         } )
     ]
 } )

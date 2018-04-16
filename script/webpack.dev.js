@@ -1,6 +1,5 @@
 const merge = require('webpack-merge')
-
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const base = require('./webpack.base')
 
@@ -16,11 +15,10 @@ module.exports = merge(base, {
         rules: [
             {
                 test: /\.css$/,
-                // mini-css-extract-plugin 暂时不支持hmr
-                use: ExtractTextPlugin.extract( {
-                    fallback: 'style-loader',
-                    use: 'css-loader'
-                } )
+                use:  [
+                  MiniCssExtractPlugin.loader,
+                  "css-loader"
+                ]
             },
             {
               test: /\.html$/,
@@ -32,5 +30,12 @@ module.exports = merge(base, {
               } ]
             }
         ]
-    }
+    },
+
+    plugins: [
+        new MiniCssExtractPlugin( {
+            filename: "[name].css",
+            chunkFilename: "[id].css"
+        } )
+    ]
 })
