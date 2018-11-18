@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' )
+const glob = require('glob')
 /*
 @ref https://github.com/webpack/webpack/issues/6568
 ```shell
@@ -8,9 +9,10 @@ yarn add extract-text-webpack-plugin@next -D
 // const ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
 
 module.exports = {
-  entry: {
-      index:'./src/index.js',
-      tags: './src/tags.js'
+  entry: () => {
+    let entries = {}
+    glob.sync('./public/*.html').forEach((filepath, idx) => entries['page' + idx] = filepath)
+    return entries
   },
 
     module: {
@@ -21,6 +23,9 @@ module.exports = {
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react']
+                    }
                 }
             },
             {   // load font
@@ -57,18 +62,14 @@ module.exports = {
 
         ]
     },
-
     plugins: [
-        new HtmlWebpackPlugin( {
-            title: "My Blog App",
-            template: './src/templates/index.html',
-            filename: "index.html",
-            chunks: ['index']
-        } ),
-        new HtmlWebpackPlugin( {
-            template: './src/templates/tags.html',
-            filename: "tags.html",
-            chunks: ['tags']
-        } )
-    ],
-};
+       ...glob.sync('./public/*.html').map((html, idx) =>
+         new HtmlWebpackPlugin({
+           title: "My Blog App",
+           template: html,
+           filename: "page" + idx + ".html",
+           chunks: ['page' + idx]
+         })
+       )
+    ]
+}
